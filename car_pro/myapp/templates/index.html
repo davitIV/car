@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Catalog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        header .highlight, header .current a {
+            color: #e8491d;
+            font-weight: bold;
+        }
+        header a:hover {
+            color: #cccccc;
+            font-weight: bold;
+        }
+        #main {
+            padding: 30px;
+            background: #ffffff;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            width: 30%;
+            float: left;
+            margin-right: 5%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+        }
+        .form-container:last-child {
+            margin-right: 0;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #ffffff;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #e8491d;
+            font-weight: bold;
+        }
+        .actions a:hover {
+            color: #35424a;
+        }
+        footer {
+            background: #35424a;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border-top: #e8491d 3px solid;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>მანქანების კატალოგი</h1>
+            </div>
+        </div>
+    </header>
+
+    <div id="main" class="container">
+        <div class="form-container">
+            <h2>{% if edit_manufacturer %}შეცვალე{% else %}დაამატე{% endif %} მანქნაის მწარმოებელი</h2>
+            <form method="post" action="{% if edit_manufacturer %}{% url 'index' %}?edit_manufacturer={{ edit_manufacturer.id }}{% else %}{% url 'index' %}{% endif %}">
+                {% csrf_token %}
+                {{ manufacturer_form.as_p }}
+                <button type="submit" name="{% if edit_manufacturer %}edit_manufacturer{% else %}save_manufacturer{% endif %}">{% if edit_manufacturer %}განახლება{% else %}დამატება{% endif %} მწარმოებელი</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h2>{% if edit_brand %}შეცვალე{% else %}დაამატე{% endif %} მანქანის ბრენდი</h2>
+            <form method="post" action="{% if edit_brand %}{% url 'index' %}?edit_brand={{ edit_brand.id }}{% else %}{% url 'index' %}{% endif %}">
+                {% csrf_token %}
+                {{ brand_form.as_p }}
+                <button type="submit" name="{% if edit_brand %}edit_brand{% else %}save_brand{% endif %}">{% if edit_brand %}განახლება{% else %}დამატება{% endif %} ბრენდი</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h2>{% if edit_spare_part %}შეცვალე{% else %}დაამატე{% endif %} სათადარიგო ნაწილი</h2>
+            <form method="post" action="{% if edit_spare_part %}{% url 'index' %}?edit_spare_part={{ edit_spare_part.id }}{% else %}{% url 'index' %}{% endif %}">
+                {% csrf_token %}
+                {{ spare_part_form.as_p }}
+                <button type="submit" name="{% if edit_spare_part %}edit_spare_part{% else %}save_spare_part{% endif %}">{% if edit_spare_part %}განახლება{% else %}დამატება{% endif %} ნაწილი</button>
+            </form>
+        </div>
+
+        <div style="clear: both;"></div>
+
+        <h2>მანქანების მწარმოებელი</h2>
+        <ul>
+        {% for manufacturer in manufacturers %}
+            <li>
+                {{ manufacturer.name }}
+                <div class="actions">
+                    <a href="{% url 'index' %}?edit_manufacturer={{ manufacturer.id }}">შეცვლა</a>
+                    <a href="{% url 'index' %}?delete_manufacturer={{ manufacturer.id }}">წაშლა</a>
+                </div>
+            </li>
+        {% empty %}
+            <li>მანქანების მწარმოებელი არ არსებობს.</li>
+        {% endfor %}
+        </ul>
+
+        <h2>მანქანის ბრენდი</h2>
+        <ul>
+        {% for brand in brands %}
+            <li>
+                {{ brand.name }}
+                <div class="actions">
+                    <a href="{% url 'index' %}?edit_brand={{ brand.id }}">შეცვლა</a>
+                    <a href="{% url 'index' %}?delete_brand={{ brand.id }}">წაშლა</a>
+                </div>
+            </li>
+        {% empty %}
+            <li>მანქანის ბრენდი არ არსებობს.</li>
+        {% endfor %}
+        </ul>
+
+        <h2>სათადარიგო ნაწილი</h2>
+        <ul>
+        {% for spare_part in spare_parts %}
+            <li>
+                {{ spare_part.name }}
+                <div class="actions">
+                    <a href="{% url 'index' %}?edit_spare_part={{ spare_part.id }}">შეცვლა</a>
+                    <a href="{% url 'index' %}?delete_spare_part={{ spare_part.id }}">წაშლა</a>
+                </div>
+            </li>
+        {% empty %}
+            <li>სათადარიგო ნაწილი არ არსებობს.</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+
+</body>
+</html>
